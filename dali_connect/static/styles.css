@@ -1,0 +1,277 @@
+/* General formatting */
+
+a {
+    text-decoration: none !important;
+    color: #000000 !important;
+}
+
+button:focus {
+    outline: none;
+}
+
+.center {
+    min-width: 900px;
+    margin: 5px auto;
+}
+
+/* Top banner formatting */
+
+#top-banner {
+    margin-top: -5px;
+    height: 60px;
+    width: 100%;
+    background-color: #333333;
+}
+
+#top-banner-content {
+    min-width: 850px;
+    display: inline-flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: left;
+    align-items: baseline;
+}
+
+.top-banner-item {
+    margin-right: 40px;
+    font-size: x-large;
+}
+
+.top-banner-item > a {
+    color: white !important;
+}
+
+#logo {
+    font-size: 30px;
+    font-weight: 500;
+}
+
+/* Headers formatting - profile view */
+
+.profile-header {
+    margin: 15px;
+}
+
+.profile-picture-div {
+    display: inline;
+    float: left;
+}
+
+.profile-picture {
+    height: 105px;
+    width: 105px;
+    margin-right: 10px;
+}
+
+#add-profile-picture {
+    position: absolute;
+    margin-top: -104px;
+    margin-left: 36px;
+    font-size: 50px;
+}
+
+#add-profile-picture > a{
+    color: #666666;
+}
+
+#add-profile-picture > a:hover {
+    color: #000000;
+}
+
+#profile-pic-form {
+    display: none;
+    position: absolute;
+    margin-top: 70px;
+    margin-left: 35px;
+    width: 800px;
+    height: 100px;
+    background-color: white;
+    border: 1px solid;
+    border-color: #dddddd;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px #888888;
+    z-index: 2;
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+#prof-pic-form-header {
+    margin-bottom: 10px;
+}
+
+#prof-pic-buttons {
+    position: absolute;
+    display: inline-flex;
+    flex-direction: row;
+    margin-top: -65px;
+    margin-left: 740px;
+}
+
+#prof-pic-yes {
+    font-size: 20px;
+    font-weight: 900;
+    color: green !important;
+    border: none;
+    margin-right: 5px;
+}
+
+#prof-pic-no {
+    font-size: 20px;
+    font-weight: 900;
+    color: red !important;
+    border: none;
+}
+
+#image-link {
+    width: 780px;
+}
+
+#profile-main {
+    height: 105px;
+}
+
+#profile-details {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+    height: 0;
+    overflow: hidden;
+    transition: 1.5s;
+}
+
+.profile-details-section {
+    width: 290px;
+    margin-right: 10px;
+}
+
+.action-button {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: smaller;
+    color: white;
+    background-color: #007bff;
+    border: 3px solid;
+    border-color: #007bff;
+    border-radius: 3px;
+}
+
+.inline-title {
+    display: inline;
+}
+
+.show-more-less-button {
+    margin-left: 10px;
+    font-size: x-small;
+    color: #007bff;
+    background: none;
+    border: none;
+}
+
+
+#show-less-button {
+    display: none;
+}
+
+#add-or-edit-profile-details {
+    display: none;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+#add-or-edit-details {
+    display: none;
+}
+
+#save-details-changes {
+    display: none;
+}
+
+[type="text"] {
+    border: 1px solid;
+    border-color: #dddddd;
+    border-radius: 5px;
+}
+
+.ethnicity-input {
+    padding-left: 10px;
+}
+
+/* Posts formattting */
+
+.feed-item {
+    text-indent: 5px;
+    /* background-color: #eeeeee; */
+    border: 1px solid;
+    border-color: #dddddd;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.feed-item:hover {
+    box-shadow: 0px 0px 2px #888888;
+}
+
+.post-timestamp {
+    font-size: x-small;
+}
+
+#like-dislike-button {
+    margin-left: 5px;
+}
+
+/* Making posts formatting */
+
+textarea {
+    border: 1px solid;
+    border-color: #dddddd;
+    border-radius: 5px;
+}
+
+[type="submit"] {
+    height: 30px;
+    width: 70px;
+    background-color: #333333;
+    color: white;
+    font-size: smaller;
+    border: 3px solid;
+    border-color: #333333;
+    border: none;
+    border-radius: 3px;
+}
+
+/* Directory formatting */
+#directory {
+    width: 900px;
+}
+
+.catalog-item {
+    height: 120px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 10px;
+    border: 1px solid;
+    border-color: #dddddd;
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    grid-template-areas: 
+        "prof-pic   prof-info"
+}
+
+.catalog-item:hover {
+    box-shadow: 0px 0px 3px #888888;
+}
+
+.catalog-item .prof-pic {
+    grid-area: prof-pic;
+    align-self: center;
+}
+
+.catalog-item .prof-info {
+    grid-area: prof-info;
+}

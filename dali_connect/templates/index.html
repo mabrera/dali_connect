@@ -1,0 +1,344 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block body %}
+
+    <!-- Passing view info from server to dali_connect.js -->
+    {{ data|json_script:"data" }}
+
+    <div id="follows-header">
+        <div class="col-5 center"><h2>{{ profile.first_name }}'s follows</h2></div>
+    </div>
+
+    <div id="profile-header">
+        <div class="col-5 center">
+            <div id="profile-main">
+                <div class="profile-picture-div">
+                    {% if profile.picture %}
+                        <img src="{{ profile.picture }}" alt="profile picture" class="profile-picture">
+                    {% else %}
+                        <img src="{% static 'blank-profile-picture.png' %}" alt="profile picture" class="profile-picture">
+                        {% if profile.username == user.username %}
+                            <div id="add-profile-picture" onclick="add_profile_picture()"><a href="">+</a></div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <form id="profile-pic-form" action="{% url 'profile-picture' %}" method="post">
+                    <div id="prof-pic-form-header">Enter a link to your desired profile picture. It must be publicly hosted.</div>
+                    <div><input id="image-link" type="text" name="picture" autofocus></div>
+                    <div id="prof-pic-buttons">
+                        <a id="prof-pic-yes" href="" onclick="submit_pic()">&#10003</a>
+                        <a id="prof-pic-no" href="" onclick="cancel_pic()">&#10005</a>
+                    </div>
+                </form>
+                <div>
+                    <h2>
+                        {% if profile.first_name %}{{ profile.first_name }} {% endif %}
+                        {% if profile.last_name %}{{ profile.last_name }} {% endif %}
+                        {% if profile.year %}'{{ profile.year }} {%endif %}
+                        ({{ profile.username }})
+                    </h2>
+                    <div>
+                        {% if profile.role %}<h5 class="inline-title">{{ profile.role }} at Dali Lab</h5>{% endif %}
+                        <button id="show-more-button" class="show-more-less-button" onclick="show_more(this)">Show more</button>
+                        <button id="show-less-button" class="show-more-less-button" onclick="show_less(this)">Show less</button>
+                        {% if profile.username == user.username %}
+                            <button id="add-or-edit-details" class="show-more-less-button" onclick="add_or_edit_details()">Add or edit details</button>
+                            <button id="save-details-changes" class="show-more-less-button" onclick="save_changes()">Save changes</button>
+                        {% endif %}
+                    </div>
+                    <button id="follow-button" class="action-button"> Follow </button>
+                    <button id="unfollow-button" class="action-button"> Unfollow </button>    
+                </div>
+            </div>
+            <div id="profile-details">
+                <div class="profile-details-section">
+                    <div><strong>Personal info</strong></div>
+                    <div>
+                        {% if profile.gender %} Gender: {{ profile.gender }} {% endif %}
+                    </div>
+                    <div>
+                        {% if profile.birthday %} Birth date: {{ profile.birthday }} {% endif %}
+                    </div>
+                    <div>
+                        {% if profile.home %} Hometown: {{ profile.home }} {% endif %}
+                    </div>
+                    <div>
+                        {% if profile.american_indian_or_alaska_native or profile.asian or profile.black_or_african_american or profile.hispanic_or_latino or profile.middle_eastern or profile.native_hawaiian_or_other_pacific_islander or profile.white %} Ethnicity: {% endif %}
+                        {% if profile.american_indian_or_alaska_native %} American Indian or Alaska Native {% endif %}
+                        {% if profile.asian %} Asian {% endif %}
+                        {% if profile.black_or_african_american %} Black or African American {% endif %}
+                        {% if profile.hispanic_or_latino %} Hispanic or Latino {% endif %}
+                        {% if profile.middle_eastern %} Middle Eastern {% endif %}
+                        {% if profile.native_hawaiian_or_other_pacific_islander %} Native Hawaiian or Other Pacific Islander {% endif %}
+                        {% if profile.white %} White {% endif %}
+                    </div>    
+                </div>
+                <div class="profile-details-section">
+                    <div><strong>Education</strong></div>
+                    <div>
+                        {% if profile.major %} Major: {{ profile.major }} {% endif %}
+                        {% if profile.modification %} modified with {{ profile.modification }} {% endif %}
+                    </div>
+                    <div>
+                        {% if profile.minor %} Minor: {{ profile.minor }} {% endif %}
+                    </div>    
+                </div>
+                <div class="profile-details-section">
+                    <div><strong>Get to know!</strong></div>
+                    <div>
+                        {% if profile.quote %} Favorite quote: <em>{{ profile.quote }}</em>{% endif %}
+                    </div>
+                    <div>
+                        {% if profile.favorite_shoe %} Favorite shoe: {{ profile.favorite_shoe }} {% endif %}
+                    </div>
+                    <div>
+                        {% if profile.favorite_artist %} Favorite artist: {{ profile.favorite_artist }} {% endif %}
+                    </div>
+                    <div>
+                        {% if profile.favorite_color %} Favorite color: {{ profile.favorite_color }} {% endif %}
+                    </div>
+                    <div>
+                        {% if profile.phoneType %} Phone type: {{ profile.phoneType }} {% endif %}
+                    </div>
+                </div>
+            </div>
+            <form action="{% url 'profile-details' %}" method="post" id="profile-details-form">
+                <div id="add-or-edit-profile-details">
+                    <div class="profile-details-section">
+                        <div><strong>Personal info</strong></div>
+                        <div>
+                            {% if profile.gender %} 
+                                Gender: <input type="text" name="gender" value="{{ profile.gender }}">
+                            {% else %}
+                                Gender: <input type="text" name="gender">
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if profile.birthday %}
+                                {% if profile.birthday.month|stringformat:"i"|length == 1 %}
+                                    {% if profile.birthday.day|stringformat:"i"|length == 1 %}
+                                        Birth date: <input type="date" name="birthday" value="{{ profile.birthday.year }}-0{{ profile.birthday.month }}-0{{ profile.birthday.day }}">
+                                    {% else %}
+                                        Birth date: <input type="date" name="birthday" value="{{ profile.birthday.year }}-0{{ profile.birthday.month }}-{{ profile.birthday.day }}">
+                                    {% endif %}
+                                {% else %}
+                                    {% if profile.birthday.day|stringformat:"i"|length == 1 %}
+                                        Birth date: <input type="date" name="birthday" value="{{ profile.birthday.year }}-0{{ profile.birthday.month }}-0{{ profile.birthday.day }}">
+                                    {% else %}
+                                        Birth date: <input type="date" name="birthday" value="{{ profile.birthday.year }}-0{{ profile.birthday.month }}-{{ profile.birthday.day }}">
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                Birth date: <input type="date" name="birthday">
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if profile.home %} 
+                                Hometown: <input type="text" name="home" value="{{ profile.home }}">
+                            {% else %}
+                                Hometown: <input type="text" name="home">
+                            {% endif %}
+                        </div>
+                        <div>
+                            Ethnicity:
+                            <div class="ethnicity-input">
+                                {% if profile.american_indian_or_alaska_native %}
+                                    <input type="checkbox" name="american_indian_or_alaska_native" checked>
+                                {% else %}
+                                    <input type="checkbox" name="american_indian_or_alaska_native">
+                                {% endif %}
+                                <label for="american_indian_or_alaska_native">American Indian/Alaska Native</label>
+                            </div>
+                            <div class="ethnicity-input">
+                                {% if profile.asian %}
+                                    <input type="checkbox" name="asian" checked>
+                                {% else %}
+                                    <input type="checkbox" name="asian">
+                                {% endif %}
+                                <label for="asian">Asian</label>
+                            </div>
+                            <div class="ethnicity-input">
+                                {% if profile.black_or_african_american %}
+                                    <input type="checkbox" name="black_or_african_american" checked>
+                                {% else %}
+                                    <input type="checkbox" name="black_or_african_american">
+                                {% endif %}
+                                <label for="black_or_african_american">Black/African American</label>
+                            </div>
+                            <div class="ethnicity-input">
+                                {% if profile.hispanic_or_latino %}
+                                    <input type="checkbox" name="hispanic_or_latino" checked>
+                                {% else %}
+                                    <input type="checkbox" name="hispanic_or_latino">
+                                {% endif %}
+                                <label for="hispanic_or_latino">Hispanic/Latino</label>
+                            </div>
+                            <div class="ethnicity-input">
+                                {% if profile.middle_eastern %}
+                                    <input type="checkbox" name="middle_eastern" checked>
+                                {% else %}
+                                    <input type="checkbox" name="middle_eastern">
+                                {% endif %}
+                                <label for="middle_eastern">Middle Eastern</label>
+                            </div>
+                            <div class="ethnicity-input">
+                                {% if profile.native_hawaiian_or_other_pacific_islander %}
+                                    <input type="checkbox" name="native_hawaiian_or_other_pacific_islander" checked>
+                                {% else %}
+                                    <input type="checkbox" name="native_hawaiian_or_other_pacific_islander">
+                                {% endif %}
+                                <label for="native_hawaiian_or_other_pacific_islander">Native Hawaiian/Pacific Islander</label>
+                            </div>
+                            <div class="ethnicity-input">
+                                {% if profile.white %}
+                                    <input type="checkbox" name="white" checked>
+                                {% else %}
+                                    <input type="checkbox" name="white">
+                                {% endif %}
+                                <label for="white">White</label>
+                            </div>
+                        </div>    
+                    </div>
+                    <div class="profile-details-section">
+                        <div><strong>Education</strong></div>
+                        <div>
+                            {% if profile.gender %} 
+                                Major: <input type="text" name="major" value="{{ profile.major }}">
+                            {% else %}
+                                Major: <input type="text" name="major">
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if profile.modification %} 
+                                Modification: <input type="text" name="modification" value="{{ profile.modification }}">
+                            {% else %}
+                                Modification: <input type="text" name="modification">
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if profile.minor %} 
+                                Minor: <input type="text" name="minor" value="{{ profile.minor }}">
+                            {% else %}
+                                Minor: <input type="text" name="minor">
+                            {% endif %}
+                        </div>    
+                    </div>
+                    <div class="profile-details-section">
+                        <div><strong>Get to know!</strong></div>
+                        <div>
+                            {% if profile.quote %} 
+                                Favorite quote: <input type="text" name="quote" value="{{ profile.quote }}">
+                            {% else %}
+                                Favorite quote: <input type="text" name="quote">
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if profile.favorite_shoe %} 
+                                Favorite shoe: <input type="text" name="favorite_shoe" value="{{ profile.favorite_shoe }}">
+                            {% else %}
+                                Favorite shoe: <input type="text" name="favorite_shoe">
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if profile.favorite_artist %} 
+                                Favorite artist: <input type="text" name="favorite_artist" value="{{ profile.favorite_artist }}">
+                            {% else %}
+                                Favorite artist: <input type="text" name="favorite_artist">
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if profile.favorite_color %} 
+                                Favorite color: <input type="text" name="favorite_color" value="{{ profile.favorite_color }}">
+                            {% else %}
+                                Favorite color: <input type="text" name="favorite_color">
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if profile.phoneType %} 
+                                Phone type: <input type="text" name="phoneType" value="{{ profile.phoneType }}">
+                            {% else %}
+                                Phone type: <input type="text" name="phoneType">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>        
+            </form>
+        </div>
+    </div>
+
+    {% if is_authenticated %}
+    <div id="add-post">
+        <br><div class="col-5 center">
+            <h4>Add a Post!</h4>
+            {% if is_profile %}
+            <form id="add-post-form" action="{% url data.view profile.pk %}" method="POST">
+                {% else %}
+            <form id="add-post-form" action="{% url data.view %}" method="POST">
+            {% endif %}
+                {% csrf_token %}
+                <textarea id="new-post-content" name="content" rows="6" style="width: 100%" placeholder="New Post"></textarea>
+                <input type="submit">
+            </form>    
+        </div><br>
+    </div>
+    {% endif %}
+
+    <div id="feed" class="col-5 center">
+        <h4>Latest posts</h4>
+        {% for post in page_obj %}
+            <div id="post-{{ post.0.pk }}" class="feed-item">
+                <div><a href="{% url 'profile' post.0.poster.pk %}"><strong>{{ post.0.poster.first_name }} {{ post.0.poster.last_name }} </strong>({{ post.0.poster.username }})</a></div>
+                <div>{{ post.0.content }}</div>
+                <div class="post-timestamp">{{ post.0.timestamp }}</div>
+                {% if is_authenticated %}
+                    <button id="like-dislike-button" class="action-button" onclick="like_dislike(this)" data-id="{{ post.0.id }}">{{ post.1 }}</button>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="directory" class="col-5 center">
+        {% for user in users %}
+            <div class="catalog-item">
+                <div class="prof-pic">
+                    {% if user.picture %}
+                        <img src="{{ user.picture }}" alt="profile picture" class="profile-picture">
+                    {% else %}
+                        <img src="{% static 'blank-profile-picture.png' %}" alt="profile picture" class="profile-picture">
+                    {% endif %}
+                </div>
+                <div class="prof-info">
+                    <a href="{% url 'profile' user.pk %}">
+                        <h4>
+                            {% if user.first_name %}{{ user.first_name }} {% endif %}
+                            {% if user.last_name %}{{ user.last_name }} {% endif %}
+                            {% if user.year %}'{{ user.year }} {%endif %}
+                            ({{ user.username }})
+                        </h4>
+                    </a>
+                    <div>{% if user.role %}<h5 class="inline-title">{{ user.role }} at Dali Lab</h5>{% endif %}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="paginator">
+        <nav class="col-5 center">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; first</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a></li>
+                {% endif %}
+                    <li class="page-item"><a class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li></li>
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>    
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'dali_connect.js' %}"></script>
+{% endblock %}
